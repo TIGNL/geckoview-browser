@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLocationChange(GeckoSession session, String url, List<org.mozilla.geckoview.SessionPermission> permissions, Boolean hasThirdPartyFeatures) {
+            public void onLocationChange(GeckoSession session, String url, List<GeckoSession.PermissionDelegate.ContentPermission> permissions, Boolean hasThirdPartyFeatures) {
                 runOnUiThread(() -> {
                     setLoadingState(false);
                     updateUrlBar(url);
