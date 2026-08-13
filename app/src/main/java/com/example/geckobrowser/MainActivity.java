@@ -1,8 +1,6 @@
 package com.example.geckobrowser;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         btnForward.setOnClickListener(v -> goForward());
         btnHome.setOnClickListener(v -> {
             hideKeyboard();
-            createNewTab("");
+            navigateTo("https://www.google.com");
         });
 
         urlBar.setOnEditorActionListener((v, actionId, event) -> {
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (tabs.isEmpty()) {
-            createNewTab("");
+            createNewTab("https://www.google.com");
         } else {
             for (GeckoTab tab : tabs) {
                 webViewContainer.addView(tab.geckoView);
@@ -77,18 +75,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession() != null) {
-            tab.geckoView.getSession().goBack();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     public void createNewTab(String url) {
         GeckoSession session = new GeckoSession();
+        session.open(geckoRuntime);
+
         GeckoView geckoView = new GeckoView(this);
         geckoView.setSession(session);
 
@@ -113,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         }
         currentTabId = id;
         GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession() != null) {
+        if (tab != null) {
             updateUrlBar(tab.url);
         }
         updateNavButtons();
@@ -141,22 +131,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadUrl(String url) {
         GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession() != null) {
+        if (tab != null) {
             tab.geckoView.getSession().loadUri(url);
             tab.url = url;
+            updateUrlBar(url);
         }
     }
 
     private void goBack() {
         GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession() != null) {
+        if (tab != null) {
             tab.geckoView.getSession().goBack();
         }
     }
 
     private void goForward() {
         GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession() != null) {
+        if (tab != null) {
             tab.geckoView.getSession().goForward();
         }
     }
