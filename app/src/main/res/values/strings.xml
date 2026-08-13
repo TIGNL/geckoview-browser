@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">Gecko Browser</string>
     <string name="hint_search">Search or enter URL</string>
-    <string name="btn_back">\u2190</string>
-    <string name="btn_forward">\u2192</string>
-    <string name="btn_home">\u25CB</string>
-    <string name="btn_tabs">\u25A1</string>
-    <string name="btn_more">\u22EE</string>
-    <string name="btn_cancel">\u00D7</string>
-    <string name="btn_refresh">\u21BB</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_forward">Forward</string>
+    <string name="btn_home">Home</string>
+    <string name="btn_tabs">Tabs</string>
+    <string name="btn_more">More</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="btn_cancel">Cancel</string>
 </resources>

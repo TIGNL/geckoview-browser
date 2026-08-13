@@ -7,10 +7,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout webViewContainer;
     private EditText urlBar;
-    private TextView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
+    private ImageView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
 
     private boolean isLoading = false;
 
@@ -93,6 +94,26 @@ public class MainActivity extends AppCompatActivity {
     public void createNewTab(String url) {
         GeckoSession session = new GeckoSession();
         session.open(geckoRuntime);
+
+        session.setContentProgressDelegate(new GeckoSession.ContentProgressDelegate() {
+            @Override
+            public void onPageStart(GeckoSession session, String url) {
+                runOnUiThread(() -> setLoadingState(true));
+            }
+
+            @Override
+            public void onPageStop(GeckoSession session, boolean success) {
+                runOnUiThread(() -> setLoadingState(false));
+            }
+
+            @Override
+            public void onProgressChange(GeckoSession session, int progress) {
+            }
+
+            @Override
+            public void onSecurityChange(GeckoSession session, SecurityInformation securityInfo) {
+            }
+        });
 
         GeckoView geckoView = new GeckoView(this);
         geckoView.setSession(session);
@@ -186,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
     private void setLoadingState(boolean loading) {
         isLoading = loading;
         if (loading) {
-            btnRefreshCancel.setText(R.string.btn_cancel);
+            btnRefreshCancel.setImageResource(R.drawable.ic_cancel);
         } else {
-            btnRefreshCancel.setText(R.string.btn_refresh);
+            btnRefreshCancel.setImageResource(R.drawable.ic_refresh);
         }
     }
 

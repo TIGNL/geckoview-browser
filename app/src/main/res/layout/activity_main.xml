@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -26,15 +26,14 @@
             android:inputType="textUri"
             android:paddingHorizontal="16dp" />
 
-        <TextView
+        <ImageView
             android:id="@+id/btnRefreshCancel"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/btn_refresh"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_refresh"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_refresh" />
     </LinearLayout>
 
     <View
@@ -55,84 +54,54 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:gravity="center">
 
-        <TextView
+        <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_back"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:src="@drawable/ic_back"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_back" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/divider" />
-
-        <TextView
+        <ImageView
             android:id="@+id/btnForward"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_forward"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:src="@drawable/ic_forward"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_forward" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/divider" />
-
-        <TextView
+        <ImageView
             android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_home"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:src="@drawable/ic_home"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_home" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/divider" />
-
-        <TextView
+        <ImageView
             android:id="@+id/btnTabs"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_tabs"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:src="@drawable/ic_tabs"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_tabs" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/divider" />
-
-        <TextView
+        <ImageView
             android:id="@+id/btnMore"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/btn_more"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:background="?android:attr/selectableItemBackground" />
+            android:src="@drawable/ic_more"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_more" />
     </LinearLayout>
 
     <View
