@@ -11,10 +11,11 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
+import org.mozilla.geckoview.WebRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             if (tab == null) return;
             if (isLoading) {
                 tab.geckoView.getSession().stop();
+                setLoadingState(false);
             } else {
                 tab.geckoView.getSession().reload();
             }
@@ -95,23 +97,25 @@ public class MainActivity extends AppCompatActivity {
         GeckoSession session = new GeckoSession();
         session.open(geckoRuntime);
 
-        session.setContentProgressDelegate(new GeckoSession.ContentProgressDelegate() {
+        session.setNavigationDelegate(new GeckoSession.NavigationDelegate() {
             @Override
-            public void onPageStart(GeckoSession session, String url) {
+            public void onLoadRequest(GeckoSession session, WebRequest request, int target) {
                 runOnUiThread(() -> setLoadingState(true));
             }
 
             @Override
-            public void onPageStop(GeckoSession session, boolean success) {
-                runOnUiThread(() -> setLoadingState(false));
+            public AllowOrDeny onLoadResource(GeckoSession session, WebRequest request) {
+                return AllowOrDeny.ALLOW;
+            }
+        });
+
+        session.setContentDelegate(new GeckoSession.ContentDelegate() {
+            @Override
+            public void onTitleChange(GeckoSession session, String title) {
             }
 
             @Override
-            public void onProgressChange(GeckoSession session, int progress) {
-            }
-
-            @Override
-            public void onSecurityChange(GeckoSession session, SecurityInformation securityInfo) {
+            public void onExternalResponse(GeckoSession session, org.mozilla.geckoview.WebResponse response) {
             }
         });
 
@@ -168,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadUrl(String url) {
         GeckoTab tab = getCurrentTab();
         if (tab != null) {
+            setLoadingState(true);
             tab.geckoView.getSession().loadUri(url);
             tab.url = url;
             updateUrlBar(url);
