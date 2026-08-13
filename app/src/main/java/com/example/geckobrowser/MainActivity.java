@@ -2,8 +2,6 @@ package com.example.geckobrowser;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -33,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
 
     private boolean isLoading = false;
-    private final Handler loadingHandler = new Handler(Looper.getMainLooper());
-    private final Runnable loadingTimeout = () -> setLoadingState(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +63,9 @@ public class MainActivity extends AppCompatActivity {
             if (isLoading) {
                 tab.geckoView.getSession().stop();
                 setLoadingState(false);
-                loadingHandler.removeCallbacks(loadingTimeout);
             } else {
                 tab.geckoView.getSession().reload();
                 setLoadingState(true);
-                loadingHandler.postDelayed(loadingTimeout, 15000);
             }
         });
 
@@ -101,6 +95,18 @@ public class MainActivity extends AppCompatActivity {
     public void createNewTab(String url) {
         GeckoSession session = new GeckoSession();
         session.open(geckoRuntime);
+
+        session.setContentDelegate(new GeckoSession.ContentDelegate() {
+            @Override
+            public void onPageStart(GeckoSession session, String url) {
+                runOnUiThread(() -> setLoadingState(true));
+            }
+
+            @Override
+            public void onPageStop(GeckoSession session, boolean success) {
+                runOnUiThread(() -> setLoadingState(false));
+            }
+        });
 
         GeckoView geckoView = new GeckoView(this);
         geckoView.setSession(session);
@@ -155,9 +161,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadUrl(String url) {
         GeckoTab tab = getCurrentTab();
         if (tab != null) {
-            setLoadingState(true);
-            loadingHandler.removeCallbacks(loadingTimeout);
-            loadingHandler.postDelayed(loadingTimeout, 15000);
             tab.geckoView.getSession().loadUri(url);
             tab.url = url;
             updateUrlBar(url);
@@ -184,10 +187,6 @@ public class MainActivity extends AppCompatActivity {
             urlBar.setText("");
         } else {
             urlBar.setText(pageUrl);
-        }
-        if (pageUrl != null && !pageUrl.isEmpty() && !"about:blank".equals(pageUrl)) {
-            setLoadingState(false);
-            loadingHandler.removeCallbacks(loadingTimeout);
         }
     }
 
