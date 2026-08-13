@@ -28,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout webViewContainer;
     private EditText urlBar;
-    private TextView btnBack, btnHome, btnForward;
+    private TextView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
+
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
         webViewContainer = findViewById(R.id.webViewContainer);
         urlBar = findViewById(R.id.urlBar);
         btnBack = findViewById(R.id.btnBack);
-        btnHome = findViewById(R.id.btnHome);
         btnForward = findViewById(R.id.btnForward);
+        btnHome = findViewById(R.id.btnHome);
+        btnTabs = findViewById(R.id.btnTabs);
+        btnMore = findViewById(R.id.btnMore);
+        btnRefreshCancel = findViewById(R.id.btnRefreshCancel);
 
         if (geckoRuntime == null) {
             geckoRuntime = GeckoRuntime.create(this);
@@ -50,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
         btnHome.setOnClickListener(v -> {
             hideKeyboard();
             navigateTo("https://www.google.com");
+        });
+
+        btnRefreshCancel.setOnClickListener(v -> {
+            GeckoTab tab = getCurrentTab();
+            if (tab == null) return;
+            if (isLoading) {
+                tab.geckoView.getSession().stop();
+            } else {
+                tab.geckoView.getSession().reload();
+            }
         });
 
         urlBar.setOnEditorActionListener((v, actionId, event) -> {
@@ -166,6 +181,15 @@ public class MainActivity extends AppCompatActivity {
         boolean hasSession = tab != null && tab.geckoView.getSession() != null;
         btnBack.setAlpha(hasSession ? 1.0f : 0.3f);
         btnForward.setAlpha(hasSession ? 1.0f : 0.3f);
+    }
+
+    private void setLoadingState(boolean loading) {
+        isLoading = loading;
+        if (loading) {
+            btnRefreshCancel.setText(R.string.btn_cancel);
+        } else {
+            btnRefreshCancel.setText(R.string.btn_refresh);
+        }
     }
 
     private void hideKeyboard() {
