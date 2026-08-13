@@ -2,6 +2,8 @@ package com.example.geckobrowser;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -11,11 +13,9 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
-import org.mozilla.geckoview.WebRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
 
     private boolean isLoading = false;
+    private final Handler loadingHandler = new Handler(Looper.getMainLooper());
+    private final Runnable loadingTimeout = () -> setLoadingState(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +67,11 @@ public class MainActivity extends AppCompatActivity {
             if (isLoading) {
                 tab.geckoView.getSession().stop();
                 setLoadingState(false);
+                loadingHandler.removeCallbacks(loadingTimeout);
             } else {
                 tab.geckoView.getSession().reload();
+                setLoadingState(true);
+                loadingHandler.postDelayed(loadingTimeout, 15000);
             }
         });
 
@@ -96,28 +101,6 @@ public class MainActivity extends AppCompatActivity {
     public void createNewTab(String url) {
         GeckoSession session = new GeckoSession();
         session.open(geckoRuntime);
-
-        session.setNavigationDelegate(new GeckoSession.NavigationDelegate() {
-            @Override
-            public void onLoadRequest(GeckoSession session, WebRequest request, int target) {
-                runOnUiThread(() -> setLoadingState(true));
-            }
-
-            @Override
-            public AllowOrDeny onLoadResource(GeckoSession session, WebRequest request) {
-                return AllowOrDeny.ALLOW;
-            }
-        });
-
-        session.setContentDelegate(new GeckoSession.ContentDelegate() {
-            @Override
-            public void onTitleChange(GeckoSession session, String title) {
-            }
-
-            @Override
-            public void onExternalResponse(GeckoSession session, org.mozilla.geckoview.WebResponse response) {
-            }
-        });
 
         GeckoView geckoView = new GeckoView(this);
         geckoView.setSession(session);
@@ -173,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         GeckoTab tab = getCurrentTab();
         if (tab != null) {
             setLoadingState(true);
+            loadingHandler.removeCallbacks(loadingTimeout);
+            loadingHandler.postDelayed(loadingTimeout, 15000);
             tab.geckoView.getSession().loadUri(url);
             tab.url = url;
             updateUrlBar(url);
@@ -199,6 +184,10 @@ public class MainActivity extends AppCompatActivity {
             urlBar.setText("");
         } else {
             urlBar.setText(pageUrl);
+        }
+        if (pageUrl != null && !pageUrl.isEmpty() && !"about:blank".equals(pageUrl)) {
+            setLoadingState(false);
+            loadingHandler.removeCallbacks(loadingTimeout);
         }
     }
 
