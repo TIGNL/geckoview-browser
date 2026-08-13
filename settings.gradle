@@ -10,9 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs '.cache/geckoview'
-        }
+        maven { url 'https://maven.mozilla.org/maven2' }
     }
 }
 rootProject.name = "GeckoBrowser"

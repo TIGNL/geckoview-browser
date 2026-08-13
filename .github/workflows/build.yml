@@ -32,20 +32,6 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      - name: Cache GeckoView AAR
-        id: cache-geckoview
-        uses: actions/cache@v4
-        with:
-          path: .cache/geckoview
-          key: geckoview-135.0.20240916
-
-      - name: Download GeckoView AAR
-        if: steps.cache-geckoview.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p .cache/geckoview
-          curl -L -o .cache/geckoview/geckoview.aar \
-            "https://maven.mozilla.org/maven2/org/mozilla/geckoview/geckoview/135.0.20240916/geckoview-135.0.20240916.aar"
-
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
