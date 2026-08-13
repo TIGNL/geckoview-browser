@@ -28,8 +28,8 @@
 
         <ImageView
             android:id="@+id/btnRefreshCancel"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_refresh"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -60,8 +60,8 @@
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
             android:src="@drawable/ic_back"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -69,8 +69,8 @@
 
         <ImageView
             android:id="@+id/btnForward"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
             android:src="@drawable/ic_forward"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -78,8 +78,8 @@
 
         <ImageView
             android:id="@+id/btnHome"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
             android:src="@drawable/ic_home"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -87,8 +87,8 @@
 
         <ImageView
             android:id="@+id/btnTabs"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
             android:src="@drawable/ic_tabs"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -96,8 +96,8 @@
 
         <ImageView
             android:id="@+id/btnMore"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_weight="1"
             android:src="@drawable/ic_more"
             android:background="?android:attr/selectableItemBackgroundBorderless"
