@@ -172,12 +172,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateNavButtons() {
         GeckoTab tab = getCurrentTab();
-        boolean canGoBack = tab != null && tab.geckoView.getSession() != null
-                && tab.geckoView.getSession().canGoBack();
-        boolean canGoForward = tab != null && tab.geckoView.getSession() != null
-                && tab.geckoView.getSession().canGoForward();
-        btnBack.setAlpha(canGoBack ? 1.0f : 0.3f);
-        btnForward.setAlpha(canGoForward ? 1.0f : 0.3f);
+        boolean hasSession = tab != null && tab.geckoView.getSession() != null;
+        btnBack.setAlpha(hasSession ? 1.0f : 0.3f);
+        btnForward.setAlpha(hasSession ? 1.0f : 0.3f);
     }
 
     private void hideKeyboard() {
