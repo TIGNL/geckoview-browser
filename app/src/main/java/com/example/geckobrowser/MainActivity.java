@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
@@ -96,15 +98,19 @@ public class MainActivity extends AppCompatActivity {
         GeckoSession session = new GeckoSession();
         session.open(geckoRuntime);
 
-        session.setContentDelegate(new GeckoSession.ContentDelegate() {
+        session.setNavigationDelegate(new GeckoSession.NavigationDelegate() {
             @Override
-            public void onPageStart(GeckoSession session, String url) {
+            public GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession session, GeckoSession.NavigationDelegate.LoadRequest request) {
                 runOnUiThread(() -> setLoadingState(true));
+                return GeckoResult.fromValue(AllowOrDeny.ALLOW);
             }
 
             @Override
-            public void onPageStop(GeckoSession session, boolean success) {
-                runOnUiThread(() -> setLoadingState(false));
+            public void onLocationChange(GeckoSession session, String url, List<org.mozilla.geckoview.SessionPermission> permissions, Boolean hasThirdPartyFeatures) {
+                runOnUiThread(() -> {
+                    setLoadingState(false);
+                    updateUrlBar(url);
+                });
             }
         });
 
