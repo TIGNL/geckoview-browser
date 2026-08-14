@@ -1,5 +1,6 @@
 package com.example.geckobrowser;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.util.DisplayMetrics;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 public class BottomSheetMenuDialog {
@@ -17,7 +19,10 @@ public class BottomSheetMenuDialog {
     private Dialog dialog;
     private OnItemSelectedListener listener;
     private float startY;
+    private float startRawY;
     private boolean swiping;
+    private int dialogHeight;
+    private int originalY;
 
     public interface OnItemSelectedListener {
         void onDesktopModeSelected();
@@ -48,47 +53,20 @@ public class BottomSheetMenuDialog {
 
             float density = activity.getResources().getDisplayMetrics().density;
             int navbarHeight = (int) (64 * density + 0.5f);
-            int dialogHeight = (int) (screenHeight * 0.75);
+            dialogHeight = (int) (screenHeight * 0.75);
 
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight);
             window.setGravity(Gravity.TOP);
             window.setDimAmount(0.5f);
 
             WindowManager.LayoutParams params = window.getAttributes();
-            params.y = screenHeight - dialogHeight;
+            originalY = screenHeight - dialogHeight;
+            params.y = originalY;
             window.setAttributes(params);
 
             contentView.setPadding(0, 0, 0, navbarHeight);
 
-            contentView.setOnTouchListener((v, event) -> {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        startY = event.getRawY();
-                        swiping = false;
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        float dy = event.getRawY() - startY;
-                        if (dy > 10) swiping = true;
-                        if (swiping && dy > 0) {
-                            params.y = (int) ((screenHeight - dialogHeight) + dy);
-                            window.setAttributes(params);
-                        }
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        if (swiping) {
-                            float finalDy = event.getRawY() - startY;
-                            if (finalDy > dialogHeight * 0.3) {
-                                dismissWithAnimation(params, window, dialogHeight);
-                            } else {
-                                snapBack(params, window, screenHeight - dialogHeight);
-                            }
-                        }
-                        swiping = false;
-                        return true;
-                }
-                return false;
-            });
+            setupSwipeToDismiss(contentView, window, params);
         }
 
         TextView sheetDesktopMode = contentView.findViewById(R.id.sheetDesktopMode);
@@ -107,53 +85,87 @@ public class BottomSheetMenuDialog {
         dialog.show();
     }
 
-    private void dismissWithAnimation(WindowManager.LayoutParams params, Window window, int dialogHeight) {
-        final int startY = params.y;
-        final int endY = dialogHeight;
+    private void setupSwipeToDismiss(View contentView, Window window, WindowManager.LayoutParams params) {
+        contentView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    startY = params.y;
+                    startRawY = event.getRawY();
+                    swiping = false;
+                    return false;
 
-        final long duration = 250;
-        final long startTime = System.currentTimeMillis();
+                case MotionEvent.ACTION_MOVE:
+                    float dy = event.getRawY() - startRawY;
+                    if (!swiping && dy > 20) {
+                        swiping = true;
+                    }
+                    if (swiping) {
+                        float newY = startY + dy;
+                        if (newY >= originalY) {
+                            params.y = (int) newY;
+                            window.setAttributes(params);
+                            float progress = Math.min(dy / dialogHeight, 1f);
+                            window.setDimAmount(0.5f * (1f - progress));
+                        }
+                        return true;
+                    }
+                    return false;
 
-        final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-        final Runnable animator = new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = System.currentTimeMillis() - startTime;
-                float t = Math.min((float) elapsed / duration, 1f);
-                float ease = t * t;
-                params.y = (int) (startY + (endY - startY) * ease);
-                window.setAttributes(params);
-                window.setDimAmount(0.5f * (1f - ease));
-                if (t < 1f) {
-                    handler.postDelayed(this, 16);
-                } else {
-                    dismiss();
-                }
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if (swiping) {
+                        float finalDy = event.getRawY() - startRawY;
+                        if (finalDy > dialogHeight * 0.25) {
+                            animateDismiss(window, params);
+                        } else {
+                            animateSnapBack(window, params);
+                        }
+                        swiping = true;
+                        return true;
+                    }
+                    swiping = false;
+                    return false;
             }
-        };
-        handler.post(animator);
+            return false;
+        });
     }
 
-    private void snapBack(WindowManager.LayoutParams params, Window window, int targetY) {
-        final int startY = params.y;
-        final long duration = 200;
-        final long startTime = System.currentTimeMillis();
+    private void animateDismiss(Window window, WindowManager.LayoutParams params) {
+        int startYVal = params.y;
+        int endY = dialogHeight + 100;
 
-        final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-        final Runnable animator = new Runnable() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(350);
+        animator.setInterpolator(new DecelerateInterpolator(2f));
+        animator.addUpdateListener(animation -> {
+            float t = (float) animation.getAnimatedValue();
+            params.y = (int) (startYVal + (endY - startYVal) * t);
+            window.setAttributes(params);
+            window.setDimAmount(0.5f * (1f - t));
+        });
+        animator.addListener(new android.animation.AnimatorListenerAdapter() {
             @Override
-            public void run() {
-                long elapsed = System.currentTimeMillis() - startTime;
-                float t = Math.min((float) elapsed / duration, 1f);
-                float ease = 1f - (1f - t) * (1f - t);
-                params.y = (int) (startY + (targetY - startY) * ease);
-                window.setAttributes(params);
-                if (t < 1f) {
-                    handler.postDelayed(this, 16);
-                }
+            public void onAnimationEnd(android.animation.Animator animation) {
+                dismiss();
             }
-        };
-        handler.post(animator);
+        });
+        animator.start();
+    }
+
+    private void animateSnapBack(Window window, WindowManager.LayoutParams params) {
+        int startYVal = params.y;
+        int endY = originalY;
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(300);
+        animator.setInterpolator(new DecelerateInterpolator(1.5f));
+        animator.addUpdateListener(animation -> {
+            float t = (float) animation.getAnimatedValue();
+            params.y = (int) (startYVal + (endY - startYVal) * t);
+            window.setAttributes(params);
+            window.setDimAmount(0.5f);
+        });
+        animator.start();
     }
 
     public void dismiss() {
