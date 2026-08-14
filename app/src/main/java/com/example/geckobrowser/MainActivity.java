@@ -241,16 +241,6 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetMenu = new BottomSheetMenuDialog(this);
         bottomSheetMenu.setOnItemSelectedListener(new BottomSheetMenuDialog.OnItemSelectedListener() {
             @Override
-            public void onNewTabSelected() {
-                createNewTab("https://www.google.com");
-            }
-
-            @Override
-            public void onFindInPageSelected() {
-                // TODO: Implement find in page
-            }
-
-            @Override
             public void onDesktopModeSelected() {
                 isDesktopMode = !isDesktopMode;
                 GeckoTab tab = getCurrentTab();

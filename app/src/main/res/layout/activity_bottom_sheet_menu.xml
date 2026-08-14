@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF1E1E1E"
+    android:background="@android:color/black"
     android:fillViewport="true">
 
     <LinearLayout
@@ -19,38 +19,6 @@
             android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <TextView
-            android:id="@+id/sheetNewTab"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:text="@string/menu_new_tab"
-            android:textColor="@color/text_primary"
-            android:textSize="15sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <TextView
-            android:id="@+id/sheetFindInPage"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:text="@string/menu_find_in_page"
-            android:textColor="@color/text_primary"
-            android:textSize="15sp" />
 
         <View
             android:layout_width="match_parent"

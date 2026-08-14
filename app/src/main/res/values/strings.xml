@@ -10,8 +10,6 @@
     <string name="btn_refresh">Refresh</string>
     <string name="btn_cancel">Cancel</string>
     <string name="more_menu_title">Menu</string>
-    <string name="menu_new_tab">New Tab</string>
-    <string name="menu_find_in_page">Find in Page</string>
     <string name="menu_desktop_mode">Desktop Mode</string>
     <string name="menu_share">Share</string>
 </resources>

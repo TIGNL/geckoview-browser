@@ -17,8 +17,6 @@ public class BottomSheetMenuDialog {
     private OnItemSelectedListener listener;
 
     public interface OnItemSelectedListener {
-        void onNewTabSelected();
-        void onFindInPageSelected();
         void onDesktopModeSelected();
         void onShareSelected();
     }
@@ -59,20 +57,8 @@ public class BottomSheetMenuDialog {
             contentView.setPadding(0, 0, 0, navbarHeight);
         }
 
-        TextView sheetNewTab = contentView.findViewById(R.id.sheetNewTab);
-        TextView sheetFindInPage = contentView.findViewById(R.id.sheetFindInPage);
         TextView sheetDesktopMode = contentView.findViewById(R.id.sheetDesktopMode);
         TextView sheetShare = contentView.findViewById(R.id.sheetShare);
-
-        sheetNewTab.setOnClickListener(v -> {
-            dismiss();
-            if (listener != null) listener.onNewTabSelected();
-        });
-
-        sheetFindInPage.setOnClickListener(v -> {
-            dismiss();
-            if (listener != null) listener.onFindInPageSelected();
-        });
 
         sheetDesktopMode.setOnClickListener(v -> {
             dismiss();
