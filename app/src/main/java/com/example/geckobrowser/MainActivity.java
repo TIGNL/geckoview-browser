@@ -1,6 +1,7 @@
 package com.example.geckobrowser;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnBack, btnForward, btnHome, btnTabs, btnMore, btnRefreshCancel;
 
     private boolean isLoading = false;
+    private boolean isDesktopMode = false;
+    private BottomSheetMenuDialog bottomSheetMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 setLoadingState(true);
             }
         });
+
+        btnMore.setOnClickListener(v -> showBottomSheetMenu());
 
         urlBar.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -217,5 +222,61 @@ public class MainActivity extends AppCompatActivity {
         if (imm != null && getCurrentFocus() != null) {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (bottomSheetMenu != null && bottomSheetMenu.isShowing()) {
+            bottomSheetMenu.dismiss();
+            return;
+        }
+        GeckoTab tab = getCurrentTab();
+        if (tab != null && tab.geckoView.getSession().canGoBack()) {
+            tab.geckoView.getSession().goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void showBottomSheetMenu() {
+        bottomSheetMenu = new BottomSheetMenuDialog(this);
+        bottomSheetMenu.setOnItemSelectedListener(new BottomSheetMenuDialog.OnItemSelectedListener() {
+            @Override
+            public void onNewTabSelected() {
+                createNewTab("https://www.google.com");
+            }
+
+            @Override
+            public void onFindInPageSelected() {
+                // TODO: Implement find in page
+            }
+
+            @Override
+            public void onDesktopModeSelected() {
+                isDesktopMode = !isDesktopMode;
+                GeckoTab tab = getCurrentTab();
+                if (tab != null) {
+                    tab.geckoView.getSession().getSettings().setUserAgentMode(
+                        isDesktopMode
+                            ? org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE,
+                        null
+                    );
+                    tab.geckoView.getSession().reload();
+                }
+            }
+
+            @Override
+            public void onShareSelected() {
+                GeckoTab tab = getCurrentTab();
+                if (tab != null && tab.url != null && !tab.url.isEmpty()) {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, tab.url);
+                    startActivity(Intent.createChooser(shareIntent, "Share URL"));
+                }
+            }
+        });
+        bottomSheetMenu.show();
     }
 }
