@@ -231,11 +231,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         GeckoTab tab = getCurrentTab();
-        if (tab != null && tab.geckoView.getSession().canGoBack()) {
+        if (tab != null) {
             tab.geckoView.getSession().goBack();
-        } else {
-            super.onBackPressed();
         }
+        super.onBackPressed();
     }
 
     private void showBottomSheetMenu() {
@@ -259,8 +258,7 @@ public class MainActivity extends AppCompatActivity {
                     tab.geckoView.getSession().getSettings().setUserAgentMode(
                         isDesktopMode
                             ? org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
-                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE,
-                        null
+                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE
                     );
                     tab.geckoView.getSession().reload();
                 }
