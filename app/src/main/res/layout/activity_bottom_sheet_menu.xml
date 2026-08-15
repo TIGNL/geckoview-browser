@@ -12,20 +12,15 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:gravity="center">
+            android:layout_height="512dp"
+            android:background="@android:color/black">
 
             <View
                 android:layout_width="40dp"
                 android:layout_height="4dp"
-                android:layout_gravity="center"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="14dp"
                 android:background="#80FFFFFF" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="480dp"
-            android:background="@android:color/black">
 
             <TextView
                 android:id="@+id/sheetTitle"
