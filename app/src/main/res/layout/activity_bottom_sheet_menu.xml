@@ -12,9 +12,10 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="512dp"
+            android:layout_height="256dp"
             android:background="@android:color/black">
 
+            <!-- Handle — 32dp في الأعلى -->
             <View
                 android:layout_width="40dp"
                 android:layout_height="4dp"
@@ -22,10 +23,11 @@
                 android:layout_marginTop="14dp"
                 android:background="#80FFFFFF" />
 
+            <!-- العنوان يتمركز في كامل الـ 256dp -->
             <TextView
                 android:id="@+id/sheetTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
@@ -33,6 +35,7 @@
                 android:textColor="@color/text_primary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
+
         </FrameLayout>
 
         <View
