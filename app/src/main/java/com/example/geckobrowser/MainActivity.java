@@ -36,20 +36,21 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private boolean isDesktopMode = false;
     private BottomSheetMenuDialog bottomSheetMenu;
+    private TabsSheetDialog tabsSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        webViewContainer = findViewById(R.id.webViewContainer);
-        urlBar = findViewById(R.id.urlBar);
-        btnBack = findViewById(R.id.btnBack);
-        btnForward = findViewById(R.id.btnForward);
-        btnHome = findViewById(R.id.btnHome);
-        btnTabs = findViewById(R.id.btnTabs);
-        btnMore = findViewById(R.id.btnMore);
-        btnRefreshCancel = findViewById(R.id.btnRefreshCancel);
+        webViewContainer  = findViewById(R.id.webViewContainer);
+        urlBar            = findViewById(R.id.urlBar);
+        btnBack           = findViewById(R.id.btnBack);
+        btnForward        = findViewById(R.id.btnForward);
+        btnHome           = findViewById(R.id.btnHome);
+        btnTabs           = findViewById(R.id.btnTabs);
+        btnMore           = findViewById(R.id.btnMore);
+        btnRefreshCancel  = findViewById(R.id.btnRefreshCancel);
 
         if (geckoRuntime == null) {
             geckoRuntime = GeckoRuntime.create(this);
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
             hideKeyboard();
             navigateTo("https://www.google.com");
         });
-
         btnRefreshCancel.setOnClickListener(v -> {
             GeckoTab tab = getCurrentTab();
             if (tab == null) return;
@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 setLoadingState(true);
             }
         });
-
         btnMore.setOnClickListener(v -> showBottomSheetMenu());
+        btnTabs.setOnClickListener(v -> showTabsSheet());
 
         urlBar.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -92,11 +92,25 @@ public class MainActivity extends AppCompatActivity {
         if (tabs.isEmpty()) {
             createNewTab("https://www.google.com");
         } else {
-            for (GeckoTab tab : tabs) {
-                webViewContainer.addView(tab.geckoView);
-            }
+            for (GeckoTab tab : tabs) webViewContainer.addView(tab.geckoView);
             switchToTab(currentTabId);
         }
+    }
+
+    private void showTabsSheet() {
+        tabsSheet = new TabsSheetDialog(this, tabs, currentTabId);
+        tabsSheet.setOnTabSelectedListener(new TabsSheetDialog.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(int tabId) {
+                switchToTab(tabId);
+            }
+
+            @Override
+            public void onNewTabRequested() {
+                createNewTab("https://www.google.com");
+            }
+        });
+        tabsSheet.show();
     }
 
     public void createNewTab(String url) {
@@ -105,13 +119,16 @@ public class MainActivity extends AppCompatActivity {
 
         session.setNavigationDelegate(new GeckoSession.NavigationDelegate() {
             @Override
-            public GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession session, GeckoSession.NavigationDelegate.LoadRequest request) {
+            public GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession session,
+                    GeckoSession.NavigationDelegate.LoadRequest request) {
                 runOnUiThread(() -> setLoadingState(true));
                 return GeckoResult.fromValue(AllowOrDeny.ALLOW);
             }
 
             @Override
-            public void onLocationChange(GeckoSession session, String url, List<GeckoSession.PermissionDelegate.ContentPermission> permissions, Boolean hasThirdPartyFeatures) {
+            public void onLocationChange(GeckoSession session, String url,
+                    List<GeckoSession.PermissionDelegate.ContentPermission> permissions,
+                    Boolean hasThirdPartyFeatures) {
                 runOnUiThread(() -> {
                     setLoadingState(false);
                     updateUrlBar(url);
@@ -132,9 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 FrameLayout.LayoutParams.MATCH_PARENT));
 
         switchToTab(id);
-        if (url != null && !url.isEmpty()) {
-            loadUrl(url);
-        }
+        if (url != null && !url.isEmpty()) loadUrl(url);
     }
 
     public void switchToTab(int id) {
@@ -143,9 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
         currentTabId = id;
         GeckoTab tab = getCurrentTab();
-        if (tab != null) {
-            updateUrlBar(tab.url);
-        }
+        if (tab != null) updateUrlBar(tab.url);
         updateNavButtons();
     }
 
@@ -158,15 +171,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void navigateTo(String input) {
         if (input == null || input.trim().isEmpty()) return;
-        String webViewUrl;
+        String url;
         if (input.startsWith("http://") || input.startsWith("https://")) {
-            webViewUrl = input;
+            url = input;
         } else if (input.contains(".") && !input.contains(" ")) {
-            webViewUrl = "https://" + input;
+            url = "https://" + input;
         } else {
-            webViewUrl = "https://www.google.com/search?q=" + input.replace(" ", "+");
+            url = "https://www.google.com/search?q=" + input.replace(" ", "+");
         }
-        loadUrl(webViewUrl);
+        loadUrl(url);
     }
 
     private void loadUrl(String url) {
@@ -180,16 +193,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void goBack() {
         GeckoTab tab = getCurrentTab();
-        if (tab != null) {
-            tab.geckoView.getSession().goBack();
-        }
+        if (tab != null) tab.geckoView.getSession().goBack();
     }
 
     private void goForward() {
         GeckoTab tab = getCurrentTab();
-        if (tab != null) {
-            tab.geckoView.getSession().goForward();
-        }
+        if (tab != null) tab.geckoView.getSession().goForward();
     }
 
     private void updateUrlBar(String pageUrl) {
@@ -210,11 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setLoadingState(boolean loading) {
         isLoading = loading;
-        if (loading) {
-            btnRefreshCancel.setImageResource(R.drawable.ic_cancel);
-        } else {
-            btnRefreshCancel.setImageResource(R.drawable.ic_refresh);
-        }
+        btnRefreshCancel.setImageResource(
+            loading ? R.drawable.ic_cancel : R.drawable.ic_refresh);
     }
 
     private void hideKeyboard() {
@@ -230,10 +236,12 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetMenu.dismiss();
             return;
         }
-        GeckoTab tab = getCurrentTab();
-        if (tab != null) {
-            tab.geckoView.getSession().goBack();
+        if (tabsSheet != null && tabsSheet.isShowing()) {
+            tabsSheet.dismiss();
+            return;
         }
+        GeckoTab tab = getCurrentTab();
+        if (tab != null) tab.geckoView.getSession().goBack();
         super.onBackPressed();
     }
 
@@ -253,8 +261,7 @@ public class MainActivity extends AppCompatActivity {
                     tab.geckoView.getSession().getSettings().setUserAgentMode(
                         isDesktopMode
                             ? org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
-                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE
-                    );
+                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                     tab.geckoView.getSession().reload();
                 }
             }
