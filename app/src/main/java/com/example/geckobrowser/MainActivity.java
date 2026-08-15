@@ -242,10 +242,7 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetMenu.setOnItemSelectedListener(new BottomSheetMenuDialog.OnItemSelectedListener() {
             @Override
             public void onSettingsSelected() {
-                GeckoTab tab = getCurrentTab();
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                intent.putExtra("desktop_mode", isDesktopMode);
-                startActivityForResult(intent, 1001);
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
 
             @Override
@@ -274,25 +271,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         bottomSheetMenu.show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
-            boolean newDesktopMode = data.getBooleanExtra("desktop_mode", false);
-            if (newDesktopMode != isDesktopMode) {
-                isDesktopMode = newDesktopMode;
-                GeckoTab tab = getCurrentTab();
-                if (tab != null) {
-                    tab.geckoView.getSession().getSettings().setUserAgentMode(
-                        isDesktopMode
-                            ? org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
-                            : org.mozilla.geckoview.GeckoSessionSettings.USER_AGENT_MODE_MOBILE
-                    );
-                    tab.geckoView.getSession().reload();
-                }
-            }
-        }
     }
 }

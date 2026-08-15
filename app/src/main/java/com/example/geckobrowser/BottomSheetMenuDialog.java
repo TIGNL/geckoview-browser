@@ -1,9 +1,11 @@
 package com.example.geckobrowser;
 
 import android.app.Activity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class BottomSheetMenuDialog {
@@ -31,6 +33,19 @@ public class BottomSheetMenuDialog {
 
         View contentView = activity.getLayoutInflater().inflate(R.layout.activity_bottom_sheet_menu, null);
         dialog.setContentView(contentView);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int screenHeight = dm.heightPixels;
+        int sheetHeight = (int) (screenHeight * 0.75);
+
+        View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            behavior.setPeekHeight(sheetHeight);
+            behavior.setMaxHeight(sheetHeight);
+        }
 
         TextView sheetSettings = contentView.findViewById(R.id.sheetSettings);
         TextView sheetDesktopMode = contentView.findViewById(R.id.sheetDesktopMode);

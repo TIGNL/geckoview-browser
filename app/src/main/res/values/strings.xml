@@ -14,6 +14,5 @@
     <string name="menu_desktop_mode">Desktop Mode</string>
     <string name="menu_share">Share</string>
     <string name="settings_title">Settings</string>
-    <string name="desktop_mode_on">Desktop Mode (ON)</string>
-    <string name="desktop_mode_off">Desktop Mode (OFF)</string>
+    <string name="parental_controls">Parental Controls</string>
 </resources>
