@@ -22,24 +22,27 @@
                 android:background="#80FFFFFF" />
         </FrameLayout>
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="480dp"
+            android:background="@android:color/black">
+
+            <TextView
+                android:id="@+id/sheetTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/more_menu_title"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider" />
-
-        <TextView
-            android:id="@+id/sheetTitle"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:gravity="center"
-            android:text="@string/more_menu_title"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@color/divider" />
 
         <TextView
@@ -55,7 +58,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@color/divider" />
 
         <TextView
@@ -71,7 +74,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@color/divider" />
 
         <TextView
@@ -87,7 +90,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@color/divider" />
 
     </LinearLayout>

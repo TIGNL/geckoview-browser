@@ -37,14 +37,13 @@ public class BottomSheetMenuDialog {
         DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         int screenHeight = dm.heightPixels;
-        int sheetHeight = (int) (screenHeight * 0.75);
 
         View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         if (bottomSheet != null) {
-            bottomSheet.getLayoutParams().height = sheetHeight;
+            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
 
             BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
-            behavior.setPeekHeight(sheetHeight);
+            behavior.setPeekHeight(screenHeight);
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             behavior.setSkipCollapsed(true);
         }
