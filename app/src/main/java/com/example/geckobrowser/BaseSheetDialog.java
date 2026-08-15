@@ -17,9 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * الهيكل الثابت:
  *   • Header  256dp = Handle 32dp (يطفو فوق العنوان) + عنوان مُتمركز في كامل الـ 256dp
- *   • Divider 2dp
  *   • قائمة عناصر — كل عنصر 64dp مع padding 16dp جوانب ومحتوى 32dp متمركز
- *   • Divider 2dp بين كل عنصر
+ *   • Divider 2dp قبل أول عنصر وبعد كل عنصر
  *
  * الاستخدام:
  *   1. مرر العنوان عبر setTitle()
@@ -50,7 +49,7 @@ public class BaseSheetDialog {
     public BaseSheetDialog addItem(ContentBuilder contentBuilder, Runnable onClick) {
         if (itemsContainer == null) return this;
 
-        // Divider فوق كل عنصر
+        // Divider فوق أول عنصر فقط
         addDivider();
 
         // inflate العنصر
@@ -66,6 +65,9 @@ public class BaseSheetDialog {
         });
 
         itemsContainer.addView(row);
+
+        // Divider بعد كل عنصر
+        addDivider();
         return this;
     }
 
@@ -114,9 +116,6 @@ public class BaseSheetDialog {
 
         root.addView(header);
 
-        // ── Divider تحت الـ header ────────────────────────────────────────
-        root.addView(buildDividerView());
-
         // ── حاوية العناصر ────────────────────────────────────────────────
         itemsContainer = new LinearLayout(activity);
         itemsContainer.setOrientation(LinearLayout.VERTICAL);
@@ -127,9 +126,6 @@ public class BaseSheetDialog {
 
         // بناء العناصر (يُستدعى من الكلاسات الوارثة قبل show())
         buildItems();
-
-        // divider في النهاية
-        addDivider();
 
         dialog.setContentView(root);
 
