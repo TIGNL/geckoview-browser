@@ -49,9 +49,6 @@ public class BaseSheetDialog {
     public BaseSheetDialog addItem(ContentBuilder contentBuilder, Runnable onClick) {
         if (itemsContainer == null) return this;
 
-        // Divider فوق أول عنصر فقط
-        addDivider();
-
         // inflate العنصر
         View row = LayoutInflater.from(activity)
             .inflate(R.layout.item_sheet_row, itemsContainer, false);
@@ -123,6 +120,9 @@ public class BaseSheetDialog {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT));
         root.addView(itemsContainer);
+
+        // divider واحد قبل أول عنصر
+        addDivider();
 
         // بناء العناصر (يُستدعى من الكلاسات الوارثة قبل show())
         buildItems();
