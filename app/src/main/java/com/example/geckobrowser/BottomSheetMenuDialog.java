@@ -1,17 +1,19 @@
 package com.example.geckobrowser;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
-
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class BottomSheetMenuDialog {
 
     private final Activity activity;
-    private BottomSheetDialog dialog;
+    private Dialog dialog;
     private OnItemSelectedListener listener;
 
     public interface OnItemSelectedListener {
@@ -29,22 +31,31 @@ public class BottomSheetMenuDialog {
     }
 
     public void show() {
-        dialog = new BottomSheetDialog(activity, R.style.BottomSheetDialogTheme);
+        dialog = new Dialog(activity, R.style.BottomSheetDialogTheme);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
 
         View contentView = activity.getLayoutInflater().inflate(R.layout.activity_bottom_sheet_menu, null);
         dialog.setContentView(contentView);
 
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int screenHeight = dm.heightPixels;
-        int sheetHeight = (int) (screenHeight * 0.75);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            DisplayMetrics dm = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int screenHeight = dm.heightPixels;
+            int dialogHeight = (int) (screenHeight * 0.75);
 
-        View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        if (bottomSheet != null) {
-            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
-            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            behavior.setPeekHeight(sheetHeight);
-            behavior.setMaxHeight(sheetHeight);
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight);
+            window.setGravity(Gravity.TOP);
+            window.setDimAmount(0.5f);
+
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.y = screenHeight - dialogHeight;
+            window.setAttributes(params);
+
+            float density = activity.getResources().getDisplayMetrics().density;
+            int navbarHeight = (int) (64 * density + 0.5f);
+            contentView.setPadding(0, 0, 0, navbarHeight);
         }
 
         TextView sheetSettings = contentView.findViewById(R.id.sheetSettings);
